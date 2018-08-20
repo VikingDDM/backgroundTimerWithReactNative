@@ -29,15 +29,15 @@ class BackgroundTimer {
   }
 
   // Original API
-  start(delay = 0) {
+  static start(delay = 0) {
     return RNBackgroundTimer.start(delay);
   }
 
-  stop() {
+  static stop() {
     return RNBackgroundTimer.stop();
   }
 
-  runBackgroundTimer(callback, delay) {
+  static runBackgroundTimer(callback, delay) {
     const EventEmitter = Platform.select({
       ios: () => NativeAppEventEmitter,
       android: () => DeviceEventEmitter,
@@ -49,21 +49,21 @@ class BackgroundTimer {
     });
   }
 
-  backgroundClockMethod(callback, delay) {
-    this.backgroundTimer = this.setTimeout(() => {
+  static backgroundClockMethod(callback, delay) {
+    this.backgroundTimer = setTimeout(() => {
       callback();
       this.backgroundClockMethod(callback, delay);
     },
     delay);
   }
 
-  stopBackgroundTimer() {
+  static stopBackgroundTimer() {
     this.stop();
     clearTimeout(this.backgroundTimer);
   }
 
   // New API, allowing for multiple timers
-  setTimeout(callback, timeout) {
+  static setTimeout(callback, timeout) {
     this.uniqueId += 1;
     const timeoutId = this.uniqueId;
     this.callbacks[timeoutId] = {
@@ -75,14 +75,14 @@ class BackgroundTimer {
     return timeoutId;
   }
 
-  clearTimeout(timeoutId) {
+  static clearTimeout(timeoutId) {
     if (this.callbacks[timeoutId]) {
       delete this.callbacks[timeoutId];
       // RNBackgroundTimer.clearTimeout(timeoutId);
     }
   }
 
-  setInterval(callback, timeout) {
+  static setInterval(callback, timeout) {
     this.uniqueId += 1;
     const intervalId = this.uniqueId;
     this.callbacks[intervalId] = {
@@ -94,7 +94,7 @@ class BackgroundTimer {
     return intervalId;
   }
 
-  clearInterval(intervalId) {
+  static clearInterval(intervalId) {
     if (this.callbacks[intervalId]) {
       delete this.callbacks[intervalId];
       // RNBackgroundTimer.clearTimeout(intervalId);
